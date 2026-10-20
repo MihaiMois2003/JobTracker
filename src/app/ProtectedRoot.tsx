@@ -5,8 +5,11 @@ import { JobPanel } from '../features/job/JobPanel'
 import { SettingsProvider } from '../features/settings/SettingsProvider'
 import { useAttention } from '../features/today/useAttention'
 import { AppShell } from './AppShell'
+import { CommandPalette } from './CommandPalette'
+import { ShortcutsDialog } from './ShortcutsDialog'
 import { ShellSkeleton } from './ShellSkeleton'
 import { UIProvider } from './UIProvider'
+import { useShortcuts } from './useShortcuts'
 
 export function ProtectedRoot() {
   return (
@@ -24,6 +27,7 @@ export function ProtectedRoot() {
 
 function Shell() {
   const { count } = useAttention()
+  useShortcuts()
   return (
     <AppShell
       attention={count}
@@ -31,6 +35,8 @@ function Shell() {
         <>
           <AddJobDialog />
           <JobPanel />
+          <CommandPalette />
+          <ShortcutsDialog />
         </>
       }
     />

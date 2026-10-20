@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router'
 
 interface UIState {
@@ -20,7 +20,8 @@ interface UIState {
 const UIContext = createContext<UIState | null>(null)
 
 export function UIProvider({ children }: { children: ReactNode }) {
-  const [addOpen, setAddOpen] = useState(false)
+  // Home-screen shortcut "Add job" opens the app at /?add=1.
+  const [addOpen, setAddOpen] = useState(() => new URLSearchParams(window.location.search).get('add') === '1')
   const [addUrl, setAddUrl] = useState('')
   const [paletteOpen, setPaletteOpen] = useState(false)
   const [shortcutsOpen, setShortcutsOpen] = useState(false)
@@ -54,6 +55,19 @@ export function UIProvider({ children }: { children: ReactNode }) {
       ),
     [setParams],
   )
+
+  // Drop the one-shot ?add=1 from the URL.
+  useEffect(() => {
+    if (params.get('add') !== '1') return
+    setParams(
+      (p) => {
+        const next = new URLSearchParams(p)
+        next.delete('add')
+        return next
+      },
+      { replace: true },
+    )
+  }, [params, setParams])
 
   const value = useMemo<UIState>(
     () => ({

@@ -1,0 +1,139 @@
+.dialog {
+  margin: 12vh auto auto !important;
+  width: min(600px, calc(100vw - 24px)) !important;
+}
+
+.palette {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: min(70vh, 560px);
+}
+
+.searchRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: 0 var(--s-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.searchRow svg {
+  width: 18px;
+  height: 18px;
+  color: var(--ink-3);
+  flex: none;
+}
+
+.searchRow input {
+  flex: 1;
+  height: 56px;
+  border: 0;
+  background: transparent;
+  font-size: var(--text-md);
+}
+
+.searchRow input:focus {
+  outline: none;
+}
+
+.searchRow input::placeholder {
+  color: var(--ink-3);
+}
+
+.list {
+  overflow-y: auto;
+  padding: 6px;
+}
+
+.group {
+  padding: 10px 10px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 40px;
+  padding: 6px 10px;
+  border-radius: var(--r-md);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+@media (pointer: coarse) {
+  .option {
+    min-height: 48px;
+  }
+}
+
+.active {
+  background: var(--paper-hover);
+}
+
+.optionIcon {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  flex: none;
+  color: var(--ink-3);
+}
+
+.optionIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.optionLabel {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.optionHint {
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+}
+
+.enter {
+  width: 14px;
+  height: 14px;
+  color: var(--ink-3);
+}
+
+.none {
+  padding: var(--s-6) var(--s-4);
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--ink-3);
+}
+
+.shortcuts {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px var(--s-4);
+  font-size: var(--text-sm);
+}
+
+.shortcuts dt {
+  color: var(--ink-2);
+}
+
+.shortcuts dd {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.then {
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+}

@@ -79,7 +79,7 @@ export function Board({ items }: { items: Application[] }) {
       }}
     >
       <div className={styles.board} role="list" aria-label={t('board.label')}>
-        {PIPELINE_STATUSES.map((status) => (
+        {PIPELINE_STATUSES.filter((s) => s !== 'accepted' || activeId !== null || (columns.get(s)?.length ?? 0) > 0).map((status) => (
           <Column key={status} status={status} apps={columns.get(status) ?? []} activeId={activeId} />
         ))}
       </div>

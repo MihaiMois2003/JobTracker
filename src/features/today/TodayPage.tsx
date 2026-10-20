@@ -19,6 +19,7 @@ import { Skeleton } from '../../components/Feedback'
 import { Page } from '../../components/Page'
 import { dateLocale, daysSince, daysUntil, formatDateTime, formatShortDate, formatTime } from '../../lib/dates'
 import { googleCalendarUrl } from '../../lib/gcal'
+import { useNow } from '../../lib/useNow'
 import { useAuth } from '../auth/AuthProvider'
 import { useApplications } from '../applications/ApplicationsProvider'
 import { isActive, lastActivityAt } from '../applications/selectors'
@@ -45,11 +46,11 @@ export function TodayPage() {
   const { openJob } = useUI()
   const actions = useApplicationActions()
   const attention = useAttention()
+  const now = useNow()
 
   if (loading) return <TodaySkeleton />
   if (items.length === 0) return <Welcome />
 
-  const now = new Date()
   const firstName = user?.displayName?.split(' ')[0] ?? ''
   const todo = attention.followUps.length + attention.ghostSuggestions.length + attention.deadlines.length
   const active = items.filter(isActive).length
@@ -92,7 +93,7 @@ export function TodayPage() {
                     meta={[
                       interview.type !== 'other' ? t(`interviews.typeLabel.${interview.type}`) : t('interviews.typeLabel.other'),
                       formatDateTime(interview.at),
-                      interview.location,
+                      /^https?:\/\//i.test(interview.location) ? t('interviews.online') : interview.location,
                     ]}
                     actions={
                       gcal && (

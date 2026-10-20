@@ -1,5 +1,5 @@
-import { LogOut, Monitor, Moon, Sun } from 'lucide-react'
-import { useState, type ReactNode } from 'react'
+import { Keyboard, LogOut, Monitor, Moon, Sun } from 'lucide-react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../../components/Button'
 import { Input, Select } from '../../components/Field'
@@ -8,7 +8,10 @@ import { Page, PageHeader } from '../../components/Page'
 import type { Language } from '../../i18n'
 import { CURRENCIES } from '../../lib/money'
 import type { ThemePreference } from '../../lib/theme'
+import { useUI } from '../../app/UIProvider'
 import { useAuth } from '../auth/AuthProvider'
+import { DataSection } from './DataSection'
+import { SettingsGroup, SettingsRow } from './SettingsLayout'
 import styles from './SettingsPage.module.css'
 import { useSettings } from './SettingsProvider'
 
@@ -16,6 +19,7 @@ export function SettingsPage() {
   const { t } = useTranslation()
   const { settings, update } = useSettings()
   const { user, signOut } = useAuth()
+  const { setShortcutsOpen } = useUI()
 
   return (
     <Page width="narrow">
@@ -46,6 +50,13 @@ export function SettingsPage() {
             ]}
           />
         </SettingsRow>
+        <div className={styles.desktopOnly}>
+          <SettingsRow label={t('shortcuts.title')} hint={t('shortcuts.hint')}>
+            <Button icon={<Keyboard aria-hidden />} onClick={() => setShortcutsOpen(true)}>
+              {t('shortcuts.show')}
+            </Button>
+          </SettingsRow>
+        </div>
       </SettingsGroup>
 
       <SettingsGroup title={t('settings.rhythm')}>
@@ -95,6 +106,8 @@ export function SettingsPage() {
         </SettingsRow>
       </SettingsGroup>
 
+      <DataSection />
+
       <SettingsGroup title={t('settings.account')}>
         <SettingsRow label={user?.displayName ?? ''} hint={user?.email ?? ''}>
           <Button variant="secondary" icon={<LogOut aria-hidden />} onClick={() => void signOut()}>
@@ -103,35 +116,6 @@ export function SettingsPage() {
         </SettingsRow>
       </SettingsGroup>
     </Page>
-  )
-}
-
-export function SettingsGroup({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <section className={styles.group}>
-      <h2 className={styles.groupTitle}>{title}</h2>
-      <div className={styles.rows}>{children}</div>
-    </section>
-  )
-}
-
-export function SettingsRow({
-  label,
-  hint,
-  children,
-}: {
-  label: string
-  hint?: string
-  children: ReactNode
-}) {
-  return (
-    <div className={styles.row}>
-      <div className={styles.rowText}>
-        <p className={styles.rowLabel}>{label}</p>
-        {hint && <p className={styles.rowHint}>{hint}</p>}
-      </div>
-      <div className={styles.rowControl}>{children}</div>
-    </div>
   )
 }
 

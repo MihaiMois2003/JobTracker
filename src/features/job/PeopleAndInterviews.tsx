@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { Button, IconButton } from '../../components/Button'
 import { formatDateTime, formatShortDate, formatTime } from '../../lib/dates'
 import { googleCalendarUrl } from '../../lib/gcal'
+import { useNow } from '../../lib/useNow'
 import type { Application, Contact, Interview } from '../applications/types'
 import { useApplicationActions } from '../applications/useApplicationActions'
 import { ContactDialog } from './ContactDialog'
@@ -19,7 +20,7 @@ export function InterviewsSection({ app }: { app: Application }) {
   const actions = useApplicationActions()
   const [editing, setEditing] = useState<Interview | null>(null)
   const [open, setOpen] = useState(false)
-  const now = format(new Date(), "yyyy-MM-dd'T'HH:mm")
+  const now = format(useNow(), "yyyy-MM-dd'T'HH:mm")
 
   return (
     <PanelSection

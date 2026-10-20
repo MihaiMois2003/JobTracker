@@ -36,7 +36,11 @@ export function JobCardContent({ app }: { app: Application }) {
     const d = daysUntil(i.at)
     return d !== null && d >= 0 && d <= 7 && i.outcome === 'pending'
   })
-  const place = [app.workMode ? t(`workMode.${app.workMode}`) : null, app.location].filter(Boolean).join(' · ')
+  const mode = app.workMode ? t(`workMode.${app.workMode}`) : null
+  // "Remote · Remote (EU)" reads twice; drop the mode when the location already says it.
+  const place = [mode && !app.location.toLowerCase().includes(mode.toLowerCase()) ? mode : null, app.location]
+    .filter(Boolean)
+    .join(' · ')
 
   return (
     <>

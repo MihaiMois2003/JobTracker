@@ -1,13 +1,11 @@
 import { createBrowserRouter } from 'react-router'
 import { LoginPage } from '../features/auth/LoginPage'
-import { CalendarPage } from '../features/calendar/CalendarPage'
 import { JobsPage } from '../features/jobs/JobsPage'
-import { SettingsPage } from '../features/settings/SettingsPage'
-import { StatsPage } from '../features/stats/StatsPage'
 import { TodayPage } from '../features/today/TodayPage'
 import { NotFound } from './NotFound'
 import { ProtectedRoot } from './ProtectedRoot'
 
+// Today and Jobs are the daily screens and ship in the main bundle; the rest load on demand.
 export const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
   {
@@ -16,9 +14,9 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <TodayPage /> },
       { path: 'jobs', element: <JobsPage /> },
-      { path: 'calendar', element: <CalendarPage /> },
-      { path: 'stats', element: <StatsPage /> },
-      { path: 'settings', element: <SettingsPage /> },
+      { path: 'calendar', lazy: async () => ({ Component: (await import('../features/calendar/CalendarPage')).CalendarPage }) },
+      { path: 'stats', lazy: async () => ({ Component: (await import('../features/stats/StatsPage')).StatsPage }) },
+      { path: 'settings', lazy: async () => ({ Component: (await import('../features/settings/SettingsPage')).SettingsPage }) },
       { path: '*', element: <NotFound /> },
     ],
   },
