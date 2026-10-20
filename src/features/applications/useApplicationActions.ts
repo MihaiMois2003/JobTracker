@@ -177,6 +177,24 @@ export function useApplicationActions() {
       run(updateDoc(ref(app.id), patch))
     }
 
+    /** "I followed up": log it and schedule the next reminder. */
+    const followedUp = (app: Application) => {
+      run(
+        updateDoc(ref(app.id), {
+          nextFollowUpAt: addDaysISO(todayISO(), settings.followUpDays),
+          timeline: arrayUnion(event('followed_up')),
+          updatedAt: new Date().toISOString(),
+        }),
+      )
+      toast({ message: t('today.followedUpToast', { count: settings.followUpDays }) })
+    }
+
+    const snoozeFollowUp = (app: Application, days: number) =>
+      update(app.id, { nextFollowUpAt: addDaysISO(todayISO(), days) })
+
+    /** "Still waiting": hide the Ghosted suggestion for another `ghostDays`. */
+    const dismissGhost = (app: Application) => update(app.id, { ghostDismissedAt: new Date().toISOString() })
+
     const removeContact = (app: Application, contactId: string) =>
       update(app.id, { contacts: app.contacts.filter((c) => c.id !== contactId) })
 
@@ -211,6 +229,9 @@ export function useApplicationActions() {
       removeInterview,
       upsertContact,
       removeContact,
+      followedUp,
+      snoozeFollowUp,
+      dismissGhost,
       addEvent,
       writeMany,
       deleteMany,

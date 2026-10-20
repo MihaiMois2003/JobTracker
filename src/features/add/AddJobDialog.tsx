@@ -68,6 +68,15 @@ function AddJobFlow({ initialUrl, onDone }: { initialUrl: string; onDone: () => 
   // Ignores results of a reading the user cancelled.
   const request = useRef(0)
 
+  // Opened with a link (welcome screen, palette): start reading right away, once.
+  const autoStarted = useRef(false)
+  useEffect(() => {
+    if (autoStarted.current || !looksLikeUrl(initialUrl)) return
+    autoStarted.current = true
+    void readLink(initialUrl)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   // Each step marks its primary control with data-autofocus.
   useEffect(() => {
     document.querySelector<HTMLElement>('dialog[open] [data-autofocus]')?.focus()

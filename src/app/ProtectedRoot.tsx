@@ -3,6 +3,7 @@ import { ApplicationsProvider } from '../features/applications/ApplicationsProvi
 import { RequireAuth } from '../features/auth/RequireAuth'
 import { JobPanel } from '../features/job/JobPanel'
 import { SettingsProvider } from '../features/settings/SettingsProvider'
+import { useAttention } from '../features/today/useAttention'
 import { AppShell } from './AppShell'
 import { ShellSkeleton } from './ShellSkeleton'
 import { UIProvider } from './UIProvider'
@@ -13,18 +14,25 @@ export function ProtectedRoot() {
       <SettingsProvider>
         <ApplicationsProvider>
           <UIProvider>
-            <AppShell
-              attention={0}
-              overlays={
-                <>
-                  <AddJobDialog />
-                  <JobPanel />
-                </>
-              }
-            />
+            <Shell />
           </UIProvider>
         </ApplicationsProvider>
       </SettingsProvider>
     </RequireAuth>
+  )
+}
+
+function Shell() {
+  const { count } = useAttention()
+  return (
+    <AppShell
+      attention={count}
+      overlays={
+        <>
+          <AddJobDialog />
+          <JobPanel />
+        </>
+      }
+    />
   )
 }

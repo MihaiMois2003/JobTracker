@@ -12,6 +12,7 @@ import {
   ExternalLink,
   FileText,
   Flag,
+  Ghost,
   Globe,
   Link2,
   MapPin,
@@ -20,7 +21,7 @@ import {
   Trash,
   X,
 } from 'lucide-react'
-import { useState, type ReactNode } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useUI } from '../../app/UIProvider'
 import { Button, IconButton } from '../../components/Button'
@@ -43,8 +44,13 @@ import {
   type Application,
 } from '../applications/types'
 import { useApplicationActions } from '../applications/useApplicationActions'
+import { useAttention } from '../today/useAttention'
+import { daysSince } from '../../lib/dates'
+import { lastActivityAt } from '../applications/selectors'
 import { AutosaveTextarea, FactRow, InlineDate, InlineNumber, InlineSelect, InlineText } from './InlineFields'
 import styles from './JobPanel.module.css'
+import { PanelSection } from './PanelSection'
+import { ContactsSection, InterviewsSection } from './PeopleAndInterviews'
 import { Timeline } from './Timeline'
 import { useReloadFromLink } from './useReloadFromLink'
 
@@ -76,6 +82,8 @@ function JobDetail({ app, onClose }: { app: Application; onClose: () => void }) 
   const toast = useToast()
   const [confirmDelete, setConfirmDelete] = useState(false)
   const { reload, busyId } = useReloadFromLink()
+  const { ghostSuggestions } = useAttention()
+  const suggestGhost = ghostSuggestions.some((a) => a.id === app.id)
   const reloading = busyId === app.id
   const set = (patch: Partial<Application>) => actions.update(app.id, patch)
 
@@ -182,6 +190,25 @@ function JobDetail({ app, onClose }: { app: Application; onClose: () => void }) 
           </Banner>
         )}
 
+        {suggestGhost && (
+          <Banner
+            tone="neutral"
+            icon={<Ghost aria-hidden />}
+            actions={
+              <>
+                <Button size="sm" onClick={() => actions.setStatus(app, 'ghosted')}>
+                  {t('today.markGhosted')}
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => actions.dismissGhost(app)}>
+                  {t('today.stillWaiting')}
+                </Button>
+              </>
+            }
+          >
+            {t('job.ghostSuggestion', { count: daysSince(lastActivityAt(app)) ?? 0 })}
+          </Banner>
+        )}
+
         <PanelSection title={t('job.sections.details')}>
           <div className={styles.facts}>
             <FactRow label={t('job.fields.location')} icon={<MapPin aria-hidden />}>
@@ -281,6 +308,10 @@ function JobDetail({ app, onClose }: { app: Application; onClose: () => void }) 
           </div>
         </PanelSection>
 
+        <InterviewsSection app={app} />
+
+        <ContactsSection app={app} />
+
         <PanelSection title={t('job.sections.tags')}>
           <TagInput value={app.tags} onChange={(tags) => set({ tags })} />
         </PanelSection>
@@ -335,18 +366,6 @@ function JobDetail({ app, onClose }: { app: Application; onClose: () => void }) 
 
 function withCurrent(list: readonly string[], current: string): string[] {
   return list.includes(current) ? [...list] : [current, ...list]
-}
-
-export function PanelSection({ title, action, children }: { title: string; action?: ReactNode; children: ReactNode }) {
-  return (
-    <section className={styles.section}>
-      <div className={styles.sectionHeader}>
-        <h3 className={styles.sectionTitle}>{title}</h3>
-        {action}
-      </div>
-      {children}
-    </section>
-  )
 }
 
 function PanelSkeleton() {

@@ -71,6 +71,7 @@ export type TimelineEventType =
   | 'interview_updated'
   | 'interview_removed'
   | 'contact_added'
+  | 'followed_up'
   | 'archived'
   | 'unarchived'
   | 'reloaded'
