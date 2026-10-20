@@ -1,0 +1,134 @@
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2) var(--s-3);
+  margin-bottom: var(--s-5);
+}
+
+.toolbarRight {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+@media (max-width: 767px) {
+  .toolbarRight {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+.search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 260px;
+  max-width: 420px;
+}
+
+@media (max-width: 767px) {
+  .search {
+    max-width: none;
+  }
+}
+
+.search > svg {
+  position: absolute;
+  left: 11px;
+  width: 16px;
+  height: 16px;
+  color: var(--ink-3);
+  pointer-events: none;
+}
+
+.search input {
+  width: 100%;
+  height: 36px;
+  padding: 0 34px 0 34px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  background: var(--paper-raised);
+  font-size: var(--text-sm);
+  transition:
+    border-color var(--d-fast) var(--ease),
+    box-shadow var(--d-fast) var(--ease);
+}
+
+@media (pointer: coarse) {
+  .search input {
+    height: 44px;
+  }
+}
+
+.search input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.search input::placeholder {
+  color: var(--ink-3);
+}
+
+.search input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.clearSearch {
+  position: absolute;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--r-sm);
+  color: var(--ink-3);
+}
+
+.clearSearch:hover {
+  background: var(--paper-hover);
+  color: var(--ink);
+}
+
+.clearSearch svg {
+  width: 14px;
+  height: 14px;
+}
+
+@media (max-width: 400px) {
+  .filterLabel {
+    display: none;
+  }
+}
+
+.activeFilters {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin: calc(var(--s-2) * -1) 0 var(--s-4);
+  font-size: var(--text-sm);
+  color: var(--ink-2);
+}
+
+.skeletonBoard {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+  gap: var(--s-3);
+}
+
+.skeletonColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-3);
+  border-radius: var(--r-lg);
+  background: var(--paper-sunken);
+}
+
+.skeletonList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}

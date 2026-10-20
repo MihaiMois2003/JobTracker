@@ -49,8 +49,24 @@
   gap: var(--s-2);
 }
 
-.numberInput {
+.number {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.suffix {
+  font-size: var(--text-sm);
+  color: var(--ink-3);
   width: 96px;
+}
+
+.currency {
+  width: 120px;
+}
+
+.numberInput {
+  width: 72px;
   text-align: right;
   font-variant-numeric: tabular-nums;
 }

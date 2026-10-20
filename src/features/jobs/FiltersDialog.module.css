@@ -1,0 +1,57 @@
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+.fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.legend {
+  padding: 0;
+  margin-bottom: var(--s-2);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  height: 30px;
+  padding: 0 11px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line-strong);
+  background: var(--paper-raised);
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+  transition:
+    background-color var(--d-fast) var(--ease),
+    border-color var(--d-fast) var(--ease),
+    color var(--d-fast) var(--ease);
+}
+
+@media (pointer: coarse) {
+  .chip {
+    height: 40px;
+  }
+}
+
+.chip:hover {
+  border-color: var(--ink-3);
+  color: var(--ink);
+}
+
+.chip[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}

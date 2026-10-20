@@ -1,0 +1,59 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+}
+
+.group {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.legend {
+  padding: 0;
+  margin-bottom: var(--s-3);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.salary {
+  display: grid;
+  grid-template-columns: 1fr 1fr 88px 110px;
+  gap: var(--s-2);
+}
+
+@media (max-width: 520px) {
+  .salary {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Auto-filled values: a faint moss wash so they are easy to review. */
+.auto {
+  background-color: color-mix(in srgb, var(--accent-soft) 55%, var(--paper-raised));
+}
+
+.autoLegend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+}
+
+.autoLegend svg {
+  width: 13px;
+  height: 13px;
+  color: var(--accent-ink);
+}

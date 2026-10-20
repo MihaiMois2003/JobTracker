@@ -1,11 +1,12 @@
 import { initializeApp } from 'firebase/app'
-import { getAuth, GoogleAuthProvider } from 'firebase/auth'
+import { connectAuthEmulator, getAuth, GoogleAuthProvider } from 'firebase/auth'
 import {
+  connectFirestoreEmulator,
   initializeFirestore,
   persistentLocalCache,
   persistentMultipleTabManager,
 } from 'firebase/firestore'
-import { getFunctions } from 'firebase/functions'
+import { connectFunctionsEmulator, getFunctions } from 'firebase/functions'
 
 const app = initializeApp({
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -29,3 +30,10 @@ export const db = initializeFirestore(app, {
 /** Must match the region in functions/src/index.ts. */
 export const FUNCTIONS_REGION = 'europe-west1'
 export const functions = getFunctions(app, FUNCTIONS_REGION)
+
+// Local development against `firebase emulators:start` (see README).
+if (import.meta.env.DEV && import.meta.env.VITE_USE_EMULATORS === '1') {
+  connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true })
+  connectFirestoreEmulator(db, '127.0.0.1', 8085)
+  connectFunctionsEmulator(functions, '127.0.0.1', 5001)
+}

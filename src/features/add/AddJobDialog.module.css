@@ -1,0 +1,16 @@
+.quickStatus {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2) var(--s-4);
+  margin-bottom: var(--s-6);
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-lg);
+  background: var(--paper-sunken);
+}
+
+.quickLabel {
+  font-size: var(--text-sm);
+  font-weight: 550;
+}

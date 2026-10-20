@@ -1,0 +1,71 @@
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+}
+
+.groupHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: var(--s-2);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.groupHeader span:last-child {
+  color: var(--ink-3);
+  font-weight: 500;
+}
+
+.list {
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--paper-raised);
+  overflow: hidden;
+}
+
+.item {
+  position: relative;
+  border-bottom: 1px solid var(--line);
+}
+
+.item:last-child {
+  border-bottom: 0;
+}
+
+.open {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+  min-height: 72px;
+  padding: 12px 14px 12px;
+  text-align: left;
+}
+
+.open:active {
+  background: var(--paper-hover);
+}
+
+/* Status chip sits over the card's top-right corner, replacing the priority mark area. */
+.side {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.open > div:last-child {
+  padding-right: 130px;
+}
+
+.chevron {
+  width: 16px;
+  height: 16px;
+  color: var(--ink-3);
+}

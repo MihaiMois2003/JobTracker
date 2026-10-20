@@ -24,7 +24,7 @@ const CLOSE_MS = 150
 
 /**
  * Built on the native <dialog>: focus trapping, Escape and inert background come for free.
- * We only add enter/exit motion and backdrop click.
+ * We only add enter/exit motion, backdrop click and `data-autofocus` for the initial focus.
  */
 export function Dialog({
   open,
@@ -50,7 +50,11 @@ export function Dialog({
     if (!el) return
     if (open) {
       el.removeAttribute('data-closing')
-      if (!el.open) el.showModal()
+      if (!el.open) {
+        el.showModal()
+        // showModal() focuses the first focusable element; prefer an explicit target.
+        el.querySelector<HTMLElement>('[data-autofocus]')?.focus()
+      }
       return
     }
     if (!el.open) return
