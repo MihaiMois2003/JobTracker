@@ -9,7 +9,10 @@
     "rootDir": "src",
     "sourceMap": true,
     "strict": true,
-    "target": "es2017",
+    "target": "es2022",
+    "lib": ["es2022"],
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true
   },
   "compileOnSave": true,

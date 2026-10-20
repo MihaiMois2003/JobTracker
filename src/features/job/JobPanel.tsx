@@ -16,6 +16,7 @@ import {
   Link2,
   MapPin,
   Monitor,
+  RefreshCw,
   Trash,
   X,
 } from 'lucide-react'
@@ -45,6 +46,7 @@ import { useApplicationActions } from '../applications/useApplicationActions'
 import { AutosaveTextarea, FactRow, InlineDate, InlineNumber, InlineSelect, InlineText } from './InlineFields'
 import styles from './JobPanel.module.css'
 import { Timeline } from './Timeline'
+import { useReloadFromLink } from './useReloadFromLink'
 
 export function JobPanel() {
   const { t } = useTranslation()
@@ -73,9 +75,21 @@ function JobDetail({ app, onClose }: { app: Application; onClose: () => void }) 
   const { openJob } = useUI()
   const toast = useToast()
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const { reload, busyId } = useReloadFromLink()
+  const reloading = busyId === app.id
   const set = (patch: Partial<Application>) => actions.update(app.id, patch)
 
   const menuItems: MenuEntry[] = [
+    ...(app.sourceUrl
+      ? [
+          {
+            key: 'reload',
+            label: t('job.actions.reload'),
+            icon: <RefreshCw aria-hidden />,
+            onSelect: () => void reload(app),
+          },
+        ]
+      : []),
     {
       key: 'duplicate',
       label: t('job.actions.duplicate'),
@@ -142,13 +156,28 @@ function JobDetail({ app, onClose }: { app: Application; onClose: () => void }) 
               {t('job.openOriginal')}
             </a>
           )}
+          {reloading && (
+            <span className={styles.archivedNote} role="status">
+              {t('job.reload.busy')}
+            </span>
+          )}
           {app.archived && <span className={styles.archivedNote}>{t('job.archivedNote')}</span>}
         </div>
       </header>
 
       <div className={styles.body}>
         {app.listingClosed && (
-          <Banner tone="warning" icon={<CircleSlash aria-hidden />}>
+          <Banner
+            tone="warning"
+            icon={<CircleSlash aria-hidden />}
+            actions={
+              app.status !== 'withdrawn' && app.status !== 'rejected' && !app.archived ? (
+                <Button size="sm" onClick={() => actions.setArchived(app, true)}>
+                  {t('job.actions.archive')}
+                </Button>
+              ) : undefined
+            }
+          >
             {t('job.listingClosed')}
           </Banner>
         )}
