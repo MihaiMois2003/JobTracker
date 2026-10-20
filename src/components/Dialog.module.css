@@ -1,0 +1,218 @@
+.dialog {
+  padding: 0;
+  border: 1px solid var(--line);
+  background: var(--paper-raised);
+  color: var(--ink);
+  max-width: none;
+  max-height: none;
+  overflow: hidden;
+}
+
+.dialog::backdrop {
+  background: var(--overlay);
+  animation: fade-in var(--d-base) var(--ease);
+}
+
+.dialog[data-closing]::backdrop {
+  opacity: 0;
+  transition: opacity var(--d-fast) var(--ease);
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: inherit;
+  min-height: 0;
+}
+
+/* Centered modal */
+.modal {
+  width: min(560px, calc(100vw - 32px));
+  max-height: min(86vh, 860px);
+  margin: auto;
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-pop);
+  animation: modal-in var(--d-slow) var(--ease-out);
+}
+
+.modal.wide {
+  width: min(760px, calc(100vw - 32px));
+}
+
+.modal.narrow {
+  width: min(420px, calc(100vw - 32px));
+}
+
+.modal[data-closing] {
+  opacity: 0;
+  transform: scale(0.98);
+  transition:
+    opacity var(--d-fast) var(--ease),
+    transform var(--d-fast) var(--ease);
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+}
+
+/* Side panel (desktop) / full screen (mobile) */
+.panel {
+  margin: 0 0 0 auto;
+  height: 100dvh;
+  max-height: 100dvh;
+  width: min(var(--panel-w), 100vw);
+  border-width: 0 0 0 1px;
+  border-radius: 0;
+  box-shadow: var(--shadow-pop);
+  animation: panel-in var(--d-slow) var(--ease-out);
+}
+
+.panel[data-closing] {
+  transform: translateX(24px);
+  opacity: 0;
+  transition:
+    transform var(--d-fast) var(--ease),
+    opacity var(--d-fast) var(--ease);
+}
+
+@keyframes panel-in {
+  from {
+    transform: translateX(32px);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .panel {
+    width: 100vw;
+    border: 0;
+    box-shadow: none;
+    animation-name: panel-in-mobile;
+  }
+
+  @keyframes panel-in-mobile {
+    from {
+      transform: translateY(16px);
+      opacity: 0;
+    }
+  }
+
+  /* Bottom sheet */
+  .sheet {
+    margin: auto 0 0;
+    width: 100vw;
+    max-height: 88dvh;
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+    border-width: 1px 0 0;
+    padding-bottom: var(--safe-bottom);
+    animation: sheet-in var(--d-slow) var(--ease-out);
+  }
+
+  .sheet[data-closing] {
+    transform: translateY(40px);
+    opacity: 0;
+    transition:
+      transform var(--d-fast) var(--ease),
+      opacity var(--d-fast) var(--ease);
+  }
+
+  .sheet .inner::before {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 4px;
+    margin: 8px auto 0;
+    border-radius: 2px;
+    background: var(--line-strong);
+    flex: none;
+  }
+
+  @keyframes sheet-in {
+    from {
+      transform: translateY(48px);
+      opacity: 0.4;
+    }
+  }
+
+  .modal.fullOnMobile {
+    width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+    border: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .sheet {
+    width: min(440px, calc(100vw - 32px));
+    max-height: min(80vh, 720px);
+    margin: auto;
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-pop);
+    animation: modal-in var(--d-slow) var(--ease-out);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding: var(--s-5) var(--s-5) var(--s-3);
+  flex: none;
+}
+
+.panel .header,
+.modal.fullOnMobile .header {
+  padding-top: calc(var(--s-4) + var(--safe-top));
+}
+
+@media (min-width: 768px) {
+  .panel .header,
+  .modal.fullOnMobile .header {
+    padding-top: var(--s-5);
+  }
+}
+
+.titleWrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--text-xl);
+}
+
+.description {
+  margin-top: 4px;
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--s-2) var(--s-5) var(--s-5);
+}
+
+.footer {
+  flex: none;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--s-2);
+  padding: var(--s-3) var(--s-5) calc(var(--s-3) + var(--safe-bottom));
+  border-top: 1px solid var(--line);
+  background: var(--paper-raised);
+}
+
+@media (min-width: 768px) {
+  .footer {
+    padding-bottom: var(--s-3);
+  }
+}

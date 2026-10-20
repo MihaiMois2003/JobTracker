@@ -1,0 +1,68 @@
+.page {
+  position: relative;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: calc(var(--s-6) + var(--safe-top)) var(--s-5) calc(var(--s-6) + var(--safe-bottom));
+  overflow: hidden;
+}
+
+.rules {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 31px,
+    color-mix(in srgb, var(--line) 70%, transparent) 31px,
+    color-mix(in srgb, var(--line) 70%, transparent) 32px
+  );
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, transparent 30%, #000 85%);
+}
+
+.rules::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: max(24px, calc(50% - 300px));
+  width: 1px;
+  background: color-mix(in srgb, var(--st-rejected) 35%, transparent);
+}
+
+.card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  animation: rise-in var(--d-slow) var(--ease-out);
+}
+
+.title {
+  margin-top: var(--s-8);
+  font-size: clamp(1.75rem, 5vw, 2.25rem);
+  font-weight: 420;
+  text-wrap: balance;
+}
+
+.lead {
+  color: var(--ink-2);
+  font-size: var(--text-md);
+  margin-bottom: var(--s-4);
+  text-wrap: pretty;
+}
+
+.error {
+  font-size: var(--text-sm);
+  color: var(--danger);
+}
+
+.fineprint {
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+}

@@ -1,0 +1,65 @@
+.region {
+  position: fixed;
+  z-index: 200;
+  left: 50%;
+  bottom: calc(var(--s-6) + var(--safe-bottom));
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-2);
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  .region {
+    bottom: calc(var(--bottombar-h) + var(--s-3) + var(--safe-bottom));
+  }
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-height: 44px;
+  padding: 8px 8px 8px 16px;
+  border-radius: var(--r-lg);
+  background: var(--ink);
+  color: var(--ink-inverse);
+  font-size: var(--text-sm);
+  box-shadow: var(--shadow-pop);
+  pointer-events: auto;
+  animation: rise-in var(--d-base) var(--ease-out);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--st-offer);
+  flex: none;
+}
+
+.toast[data-tone='danger'] .dot {
+  background: var(--st-rejected);
+}
+
+.message {
+  padding-right: var(--s-2);
+}
+
+.action {
+  height: 30px;
+  padding: 0 10px;
+  border-radius: var(--r-md);
+  font-weight: 600;
+  color: var(--ink-inverse);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.action:hover {
+  background: color-mix(in srgb, var(--ink-inverse) 12%, transparent);
+}

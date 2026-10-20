@@ -1,0 +1,48 @@
+.wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1px;
+  font-family: var(--font-display);
+  font-weight: 520;
+  font-variation-settings: 'opsz' 96;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  line-height: 1;
+  text-decoration: none;
+}
+
+.mark {
+  position: relative;
+}
+
+.mark::after {
+  content: '';
+  position: absolute;
+  left: 0.04em;
+  right: 0.02em;
+  bottom: -0.16em;
+  height: 0.07em;
+  min-height: 1.5px;
+  background: var(--accent);
+  border-radius: 1px;
+}
+
+.period {
+  color: var(--accent);
+}
+
+.monogram {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 560;
+  font-variation-settings: 'opsz' 72;
+  line-height: 1;
+  padding-bottom: 2px;
+}

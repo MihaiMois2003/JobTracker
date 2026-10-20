@@ -1,0 +1,235 @@
+/*
+ * Ledger design tokens.
+ * Warm paper, warm ink, one forest-moss accent used sparingly.
+ * Dark mode re-tunes the same palette rather than inverting it.
+ */
+:root {
+  color-scheme: light;
+
+  /* Surfaces */
+  --paper: #f6f2ea;
+  --paper-raised: #fbf9f4;
+  --paper-sunken: #efeadf;
+  --paper-hover: #ece6da;
+  --overlay: rgb(31 28 23 / 0.32);
+
+  /* Ink */
+  --ink: #1f1c17;
+  --ink-2: #4a453c;
+  --ink-3: #6b6458;
+  --ink-inverse: #f6f2ea;
+
+  /* Lines */
+  --line: #e3dccf;
+  --line-strong: #cbc2b0;
+
+  /* Accent: forest moss */
+  --accent: #2c4a39;
+  --accent-hover: #213a2c;
+  --accent-soft: #e2e9df;
+  --accent-ink: #2c4a39;
+  --on-accent: #f8f5ee;
+  --focus: #2c4a39;
+
+  --danger: #9e3b27;
+  --danger-soft: #f3e0d9;
+  --warning: #8a5a12;
+  --warning-soft: #f4e7cd;
+
+  /* Status: solid (dots, charts), fg (text on soft), bg (soft fill) */
+  --st-saved: #7a8894;
+  --st-saved-fg: #435260;
+  --st-saved-bg: #e6eaec;
+  --st-applied: #4c6d8e;
+  --st-applied-fg: #2f4c69;
+  --st-applied-bg: #e0e7ee;
+  --st-screening: #b88a36;
+  --st-screening-fg: #6f4f12;
+  --st-screening-bg: #f2e7cf;
+  --st-interview: #c9741c;
+  --st-interview-fg: #7e440a;
+  --st-interview-bg: #f6e0c6;
+  --st-offer: #5b8a4b;
+  --st-offer-fg: #35602b;
+  --st-offer-bg: #e0ebd9;
+  --st-accepted: #2b5a3b;
+  --st-accepted-fg: #1f4630;
+  --st-accepted-bg: #d4e2d5;
+  --st-rejected: #a64934;
+  --st-rejected-fg: #873221;
+  --st-rejected-bg: #f2ddd5;
+  --st-ghosted: #8a857c;
+  --st-ghosted-fg: #555149;
+  --st-ghosted-bg: #e7e4de;
+  --st-withdrawn: #b3aea4;
+  --st-withdrawn-fg: #625d55;
+  --st-withdrawn-bg: #efede8;
+
+  /* Type */
+  --font-display: 'Fraunces', 'Iowan Old Style', 'Georgia', serif;
+  --font-ui: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.9375rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
+
+  /* Space (4px grid) */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+  --s-12: 48px;
+  --s-16: 64px;
+
+  /* Shape */
+  --r-sm: 4px;
+  --r-md: 6px;
+  --r-lg: 10px;
+  --r-xl: 14px;
+
+  --shadow-pop: 0 1px 2px rgb(31 28 23 / 0.06), 0 8px 24px -6px rgb(31 28 23 / 0.14);
+  --shadow-drag: 0 2px 4px rgb(31 28 23 / 0.08), 0 16px 32px -8px rgb(31 28 23 / 0.22);
+
+  /* Motion */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --d-fast: 150ms;
+  --d-base: 200ms;
+  --d-slow: 250ms;
+
+  /* Layout */
+  --sidebar-w: 220px;
+  --sidebar-w-compact: 68px;
+  --bottombar-h: 60px;
+  --panel-w: 560px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --paper: #1a1815;
+    --paper-raised: #221f1b;
+    --paper-sunken: #151310;
+    --paper-hover: #2a2621;
+    --overlay: rgb(0 0 0 / 0.5);
+    --ink: #ede7dc;
+    --ink-2: #c2baab;
+    --ink-3: #9a9183;
+    --ink-inverse: #1a1815;
+    --line: #322e28;
+    --line-strong: #4a443b;
+    --accent: #8fb79c;
+    --accent-hover: #a5c8b0;
+    --accent-soft: #233129;
+    --accent-ink: #a5c8b0;
+    --on-accent: #14130f;
+    --focus: #a5c8b0;
+    --danger: #e08a74;
+    --danger-soft: #3a221c;
+    --warning: #e0b468;
+    --warning-soft: #3a2e19;
+    --st-saved: #8b9aa6;
+    --st-saved-fg: #bccad5;
+    --st-saved-bg: #272d31;
+    --st-applied: #7397bb;
+    --st-applied-fg: #b3cbe3;
+    --st-applied-bg: #222b35;
+    --st-screening: #d0a454;
+    --st-screening-fg: #e8c98c;
+    --st-screening-bg: #352c1b;
+    --st-interview: #e08d3a;
+    --st-interview-fg: #f2b97d;
+    --st-interview-bg: #3a2817;
+    --st-offer: #82b06f;
+    --st-offer-fg: #b5d6a6;
+    --st-offer-bg: #23301f;
+    --st-accepted: #5f9f73;
+    --st-accepted-fg: #a8d4b4;
+    --st-accepted-bg: #1d2e23;
+    --st-rejected: #d07a64;
+    --st-rejected-fg: #eeb0a0;
+    --st-rejected-bg: #3a221c;
+    --st-ghosted: #8f897f;
+    --st-ghosted-fg: #c4beb3;
+    --st-ghosted-bg: #2b2925;
+    --st-withdrawn: #6f6a62;
+    --st-withdrawn-fg: #aaa498;
+    --st-withdrawn-bg: #24221f;
+    --shadow-pop: 0 1px 2px rgb(0 0 0 / 0.3), 0 10px 28px -6px rgb(0 0 0 / 0.5);
+    --shadow-drag: 0 2px 4px rgb(0 0 0 / 0.3), 0 18px 36px -8px rgb(0 0 0 / 0.6);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --paper: #1a1815;
+  --paper-raised: #221f1b;
+  --paper-sunken: #151310;
+  --paper-hover: #2a2621;
+  --overlay: rgb(0 0 0 / 0.5);
+  --ink: #ede7dc;
+  --ink-2: #c2baab;
+  --ink-3: #9a9183;
+  --ink-inverse: #1a1815;
+  --line: #322e28;
+  --line-strong: #4a443b;
+  --accent: #8fb79c;
+  --accent-hover: #a5c8b0;
+  --accent-soft: #233129;
+  --accent-ink: #a5c8b0;
+  --on-accent: #14130f;
+  --focus: #a5c8b0;
+  --danger: #e08a74;
+  --danger-soft: #3a221c;
+  --warning: #e0b468;
+  --warning-soft: #3a2e19;
+  --st-saved: #8b9aa6;
+  --st-saved-fg: #bccad5;
+  --st-saved-bg: #272d31;
+  --st-applied: #7397bb;
+  --st-applied-fg: #b3cbe3;
+  --st-applied-bg: #222b35;
+  --st-screening: #d0a454;
+  --st-screening-fg: #e8c98c;
+  --st-screening-bg: #352c1b;
+  --st-interview: #e08d3a;
+  --st-interview-fg: #f2b97d;
+  --st-interview-bg: #3a2817;
+  --st-offer: #82b06f;
+  --st-offer-fg: #b5d6a6;
+  --st-offer-bg: #23301f;
+  --st-accepted: #5f9f73;
+  --st-accepted-fg: #a8d4b4;
+  --st-accepted-bg: #1d2e23;
+  --st-rejected: #d07a64;
+  --st-rejected-fg: #eeb0a0;
+  --st-rejected-bg: #3a221c;
+  --st-ghosted: #8f897f;
+  --st-ghosted-fg: #c4beb3;
+  --st-ghosted-bg: #2b2925;
+  --st-withdrawn: #6f6a62;
+  --st-withdrawn-fg: #aaa498;
+  --st-withdrawn-bg: #24221f;
+  --shadow-pop: 0 1px 2px rgb(0 0 0 / 0.3), 0 10px 28px -6px rgb(0 0 0 / 0.5);
+  --shadow-drag: 0 2px 4px rgb(0 0 0 / 0.3), 0 18px 36px -8px rgb(0 0 0 / 0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --d-fast: 0ms;
+    --d-base: 0ms;
+    --d-slow: 0ms;
+  }
+}

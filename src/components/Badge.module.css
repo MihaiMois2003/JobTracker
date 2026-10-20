@@ -1,0 +1,135 @@
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 9px 0 7px;
+  border-radius: var(--r-sm);
+  font-size: var(--text-xs);
+  font-weight: 550;
+  white-space: nowrap;
+  color: var(--fg);
+  background: var(--bg);
+  transition:
+    background-color var(--d-base) var(--ease),
+    color var(--d-base) var(--ease);
+}
+
+.status svg {
+  width: 13px;
+  height: 13px;
+  flex: none;
+  stroke-width: 2;
+}
+
+.status.compact {
+  height: 20px;
+  padding: 0 7px 0 5px;
+  gap: 4px;
+}
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--solid);
+  flex: none;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink-2);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+.tagRemove {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  margin-right: -4px;
+  border-radius: 3px;
+  color: var(--ink-3);
+}
+
+.tagRemove:hover {
+  background: var(--paper-hover);
+  color: var(--ink);
+}
+
+.tagRemove svg {
+  width: 12px;
+  height: 12px;
+}
+
+.kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border: 1px solid var(--line-strong);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: var(--paper-raised);
+  color: var(--ink-2);
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 550;
+  line-height: 1;
+}
+
+.priority {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+
+.priority span {
+  width: 3px;
+  border-radius: 1px;
+  background: var(--line-strong);
+}
+
+.priority span:nth-child(1) {
+  height: 5px;
+}
+.priority span:nth-child(2) {
+  height: 8px;
+}
+.priority span:nth-child(3) {
+  height: 11px;
+}
+
+.priority span[data-on] {
+  background: var(--ink-2);
+}
+
+.priority[data-level='3'] span[data-on] {
+  background: var(--st-interview);
+}
+
+.count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
