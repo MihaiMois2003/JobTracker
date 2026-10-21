@@ -537,6 +537,7 @@ export const en: Messages = {
       ai_unavailable: 'The service that reads listings is unavailable right now. Try again shortly or fill in manually.',
       text_too_short: 'That text is too short to be a listing. Paste the whole thing.',
       offline: "You're offline. You can fill it in manually; it saves without internet too.",
+      service_unavailable: "The service that reads listings isn't responding (functions not deployed or stopped). Fill in manually or paste the text.",
       internal: 'Something went wrong while reading the listing. Try again or fill in manually.',
     },
     manualLead: 'Fill in what you know. You can change anything later.',

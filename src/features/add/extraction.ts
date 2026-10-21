@@ -49,6 +49,7 @@ export type ExtractionFailure =
   | 'ai_unavailable'
   | 'text_too_short'
   | 'offline'
+  | 'service_unavailable'
   | 'internal'
 
 export class ExtractionError extends Error {
@@ -79,6 +80,10 @@ function toExtractionError(err: unknown): ExtractionError {
     if (reason && (KNOWN as string[]).includes(reason)) return new ExtractionError(reason as ExtractionFailure)
     if (err.code === 'functions/resource-exhausted') return new ExtractionError('daily_limit')
     if (err.code === 'functions/deadline-exceeded') return new ExtractionError('timeout')
+    // No reason attached: the function is missing (not deployed) or unreachable.
+    if (['functions/not-found', 'functions/internal', 'functions/unavailable'].includes(err.code)) {
+      return new ExtractionError('service_unavailable')
+    }
   }
   return new ExtractionError('internal')
 }

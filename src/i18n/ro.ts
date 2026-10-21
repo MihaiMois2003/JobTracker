@@ -535,6 +535,7 @@ export const ro = {
       ai_unavailable: 'Serviciul care citește anunțurile e indisponibil acum. Încearcă puțin mai târziu sau completează manual.',
       text_too_short: 'Textul e prea scurt ca să fie un anunț. Lipește tot anunțul.',
       offline: 'Ești offline. Poți completa manual, se salvează și fără internet.',
+      service_unavailable: 'Serviciul care citește anunțurile nu răspunde (funcțiile nu sunt publicate sau sunt oprite). Completează manual sau lipește textul.',
       internal: 'Ceva n-a mers la citirea anunțului. Încearcă din nou sau completează manual.',
     },
     manualLead: 'Completează ce știi. Poți modifica orice mai târziu.',
