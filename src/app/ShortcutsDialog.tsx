@@ -18,6 +18,7 @@ export function ShortcutsDialog() {
     [['G', 'T'], t('shortcuts.goToday')],
     [['G', 'B'], t('shortcuts.goBoard')],
     [['G', 'L'], t('shortcuts.goList')],
+    [['G', 'V'], t('shortcuts.goCvs')],
     [['G', 'C'], t('shortcuts.goCalendar')],
     [['G', 'S'], t('shortcuts.goStats')],
     [['?'], t('shortcuts.help')],

@@ -89,7 +89,6 @@ export interface Summary {
   avgDaysToResponse: number | null
   funnel: Array<{ status: 'applied' | 'screening' | 'interview' | 'offer'; count: number }>
   bySource: GroupStat<SourceName>[]
-  byCv: GroupStat<string>[]
   byWorkMode: Array<{ key: WorkMode | 'unknown'; count: number }>
 }
 
@@ -118,7 +117,6 @@ export function summarize(items: Application[]): Summary {
       count: depths.filter((d) => d >= i + 1).length,
     })),
     bySource: groupStats(items, (a) => a.sourceName),
-    byCv: groupStats(items, (a) => a.cvVersion.trim() || null),
     byWorkMode: (['remote', 'hybrid', 'onsite', 'unknown'] as const)
       .map((key) => ({ key, count: modes.get(key) ?? 0 }))
       .filter((m) => m.count > 0),

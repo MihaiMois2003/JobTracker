@@ -7,7 +7,7 @@ import { useUser } from '../auth/AuthProvider'
 import { cvStoragePath, deleteCvFile, uploadCvFile, type UploadHandle } from './cvFiles'
 import { useCvs } from './CvsProvider'
 import { cvLabel, cvSelection, jobsUsingCv } from './labels'
-import type { Cv, CvDoc, CvLanguage, CvVersion, CvVersionDoc } from './types'
+import type { Cv, CvDoc, CvLanguage, CvRecord, CvVersion, CvVersionDoc } from './types'
 
 type Op = (batch: WriteBatch) => void
 
@@ -170,7 +170,22 @@ export function useCvActions() {
       return commitAll(appIds.map<Op>((id) => (b) => b.update(appRef(id), { ...sel, updatedAt: stamp })))
     }
 
-    return { createCv, addVersion, updateCv, setDefault, setArchived, deleteCv, deleteVersion, linkJobs }
+    /** Writes CV metadata as given (demo data, JSON import); existing documents with the same id are replaced. */
+    const writeCvs = (records: CvRecord[]) =>
+      commitAll(
+        records.flatMap<Op>((r) => [
+          (b) => b.set(cvRef(r.id), r.data),
+          ...r.versions.map<Op>((v) => (b) => b.set(doc(versionsCol(r.id), v.id), v.data)),
+        ]),
+      )
+
+    /** Deletes CV documents only; Storage files are handled by the caller (demo CVs have none). */
+    const removeCvDocs = (list: Cv[]) =>
+      commitAll(
+        list.flatMap<Op>((cv) => [...cv.versions.map<Op>((v) => (b) => b.delete(doc(versionsCol(cv.id), v.id))), (b) => b.delete(cvRef(cv.id))]),
+      )
+
+    return { createCv, addVersion, updateCv, setDefault, setArchived, deleteCv, deleteVersion, linkJobs, writeCvs, removeCvDocs }
   }, [user.uid, cvs, items])
 }
 

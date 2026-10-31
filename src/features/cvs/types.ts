@@ -39,6 +39,13 @@ export interface Cv {
 export type CvDoc = Omit<Cv, 'id' | 'versions'>
 export type CvVersionDoc = Omit<CvVersion, 'id'>
 
+/** A CV with its versions as plain documents, for demo data and JSON import. */
+export interface CvRecord {
+  id: string
+  data: CvDoc
+  versions: Array<{ id: string; data: CvVersionDoc }>
+}
+
 /** What a job stores about the CV it was sent with. */
 export interface CvSelection {
   cvId: string | null

@@ -141,7 +141,7 @@ function CvDetail({ cv }: { cv: Cv }) {
                     {v.fileName && <p className={styles.versionFile}>{v.fileName}</p>}
                     <div className={styles.versionActions}>
                       {isPhone ? (
-                        <Button size="sm" variant="ghost" icon={<ExternalLink aria-hidden />} onClick={() => files.open(v)}>
+                        <Button size="sm" variant="ghost" icon={<ExternalLink aria-hidden />} onClick={() => files.open(cv, v)}>
                           {t('cvs.actions.openPdf')}
                         </Button>
                       ) : (
@@ -155,7 +155,7 @@ function CvDetail({ cv }: { cv: Cv }) {
                           {t('cvs.actions.preview')}
                         </Button>
                       )}
-                      <Button size="sm" variant="ghost" icon={<Download aria-hidden />} onClick={() => files.download(v)}>
+                      <Button size="sm" variant="ghost" icon={<Download aria-hidden />} onClick={() => files.download(cv, v)}>
                         {t('cvs.actions.download')}
                       </Button>
                       {cv.versions.length > 1 && (

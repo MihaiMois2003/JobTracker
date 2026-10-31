@@ -1,5 +1,7 @@
 import { addDays, format } from 'date-fns'
 import { newId } from '../../lib/id'
+import { cvLabel } from '../cvs/labels'
+import type { CvLanguage, CvRecord } from '../cvs/types'
 import type {
   Application,
   Contact,
@@ -248,8 +250,111 @@ const SEEDS: Seed[] = [
   },
 ]
 
-/** About 15 realistic applications across every status, dated relative to today, marked `demo`. */
-export function buildDemoApplications(currency: string): Array<{ id: string; data: Omit<Application, 'id'> }> {
+type DemoCvKey = 'fe-en' | 'fe-ro' | 'generalist'
+
+/** Three demo CVs; versions are [day offset of the upload, what changed]. They have no PDF file. */
+const DEMO_CVS: Array<{ key: DemoCvKey; name: string; language: CvLanguage; description: string; versions: Array<[number, string]> }> = [
+  {
+    key: 'fe-en',
+    name: 'Frontend',
+    language: 'en',
+    description: 'Frontend roles at international companies',
+    versions: [
+      [-120, ''],
+      [-60, 'Added the design system project'],
+      [-30, 'Shorter summary, open source work moved up'],
+    ],
+  },
+  {
+    key: 'fe-ro',
+    name: 'Frontend',
+    language: 'ro',
+    description: 'Pentru firmele din România',
+    versions: [
+      [-90, ''],
+      [-26, 'Am tradus proiectele și am adăugat certificările'],
+    ],
+  },
+  {
+    key: 'generalist',
+    name: 'Generalist',
+    language: 'ro',
+    description: 'Fullstack și roluri mai largi',
+    versions: [
+      [-150, ''],
+      [-55, 'Am scos stagiile vechi'],
+    ],
+  },
+]
+
+function demoCvFor(s: Seed): DemoCvKey | null {
+  if (!s.cv) return null
+  if (!/frontend/i.test(s.cv)) return 'generalist'
+  return /România/.test(s.location) ? 'fe-ro' : 'fe-en'
+}
+
+export interface DemoData {
+  applications: Array<{ id: string; data: Omit<Application, 'id'> }>
+  cvs: CvRecord[]
+}
+
+/**
+ * About 15 realistic applications across every status plus three CVs, dated relative to today, marked `demo`.
+ * Each application uses the CV version that existed when it was sent. `makeDefault` marks a demo CV as default
+ * (only when the user has no default of their own).
+ */
+export function buildDemoData(currency: string, makeDefault: boolean): DemoData {
+  const cvs = DEMO_CVS.map((c, i) => {
+    const id = newId()
+    const versions = c.versions.map(([offset, note], n) => ({
+      id: newId(),
+      offset,
+      data: {
+        versionNumber: n + 1,
+        fileName: `CV-${c.name}-${c.language.toUpperCase()}-v${n + 1}.pdf`,
+        size: 160_000 + n * 12_000,
+        storagePath: '',
+        note,
+        uploadedAt: stampAt(offset, 18),
+      },
+    }))
+    const record: CvRecord = {
+      id,
+      data: {
+        name: c.name,
+        language: c.language,
+        description: c.description,
+        isDefault: makeDefault && i === 0,
+        archived: false,
+        demo: true,
+        createdAt: versions[0].data.uploadedAt,
+        updatedAt: versions[versions.length - 1].data.uploadedAt,
+      },
+      versions: versions.map(({ id: vId, data }) => ({ id: vId, data })),
+    }
+    return { key: c.key, record, versions }
+  })
+
+  const cvFields = (s: Seed): Pick<Application, 'cvId' | 'cvVersionId' | 'cvLabelSnapshot' | 'cvDeleted'> => {
+    const demo = cvs.find((c) => c.key === demoCvFor(s))
+    if (!demo) return { cvId: null, cvVersionId: null, cvLabelSnapshot: '', cvDeleted: false }
+    const sentAt = (s.history.find(([, st]) => st !== 'saved') ?? s.history[0])[0]
+    const version = [...demo.versions].reverse().find((v) => v.offset <= sentAt) ?? demo.versions[0]
+    return {
+      cvId: demo.record.id,
+      cvVersionId: version.id,
+      cvLabelSnapshot: cvLabel(demo.record.data, version.data),
+      cvDeleted: false,
+    }
+  }
+
+  return { applications: buildApplications(currency, cvFields), cvs: cvs.map((c) => c.record) }
+}
+
+function buildApplications(
+  currency: string,
+  cvFields: (s: Seed) => Pick<Application, 'cvId' | 'cvVersionId' | 'cvLabelSnapshot' | 'cvDeleted'>,
+): Array<{ id: string; data: Omit<Application, 'id'> }> {
   return SEEDS.map((s) => {
     const timeline: TimelineEvent[] = []
     let prev: Status | undefined
@@ -302,11 +407,9 @@ export function buildDemoApplications(currency: string): Array<{ id: string; dat
         sourceName: s.source,
         status,
         priority: s.priority ?? 2,
-        cvVersion: s.cv ?? '',
-        cvId: null,
-        cvVersionId: null,
-        cvLabelSnapshot: '',
-        cvDeleted: false,
+        // Demo jobs are linked to demo CVs, so they never show up in the "link old jobs" tool.
+        cvVersion: '',
+        ...cvFields(s),
         appliedAt: applied ? day(applied[0]) : null,
         deadline: s.deadline !== undefined ? day(s.deadline) : null,
         nextFollowUpAt: s.followUp !== undefined ? day(s.followUp) : open ? day(4) : null,

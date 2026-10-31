@@ -21,8 +21,8 @@ export function CvPreview({ cv, version }: { cv: Cv; version: CvVersion | null }
   if (!version || !version.storagePath) {
     return (
       <div className={styles.previewBox}>
-        <EmptyState icon={<FileText aria-hidden />} title={t('cvs.preview.demo')}>
-          {t('cvs.preview.demoText')}
+        <EmptyState icon={<FileText aria-hidden />} title={t(cv.demo ? 'cvs.preview.demo' : 'cvs.preview.noFile')}>
+          {t(cv.demo ? 'cvs.preview.demoText' : 'cvs.preview.noFileText')}
         </EmptyState>
       </div>
     )
@@ -36,10 +36,10 @@ export function CvPreview({ cv, version }: { cv: Cv; version: CvVersion | null }
           title={version.fileName || cv.name}
           action={
             <div className={styles.previewActions}>
-              <Button variant="primary" size="lg" icon={<ExternalLink aria-hidden />} onClick={() => files.open(version)}>
+              <Button variant="primary" size="lg" icon={<ExternalLink aria-hidden />} onClick={() => files.open(cv, version)}>
                 {t('cvs.actions.openPdf')}
               </Button>
-              <Button size="lg" icon={<Download aria-hidden />} onClick={() => files.download(version)}>
+              <Button size="lg" icon={<Download aria-hidden />} onClick={() => files.download(cv, version)}>
                 {t('cvs.actions.download')}
               </Button>
             </div>
@@ -106,10 +106,10 @@ function EmbeddedPdf({ cv, version }: { cv: Cv; version: CvVersion }) {
         <Skeleton height="100%" radius={10} />
       )}
       <div className={styles.previewToolbar}>
-        <Button size="sm" variant="ghost" icon={<ExternalLink aria-hidden />} onClick={() => files.open(version)}>
+        <Button size="sm" variant="ghost" icon={<ExternalLink aria-hidden />} onClick={() => files.open(cv, version)}>
           {t('cvs.actions.openPdf')}
         </Button>
-        <Button size="sm" variant="ghost" icon={<Download aria-hidden />} onClick={() => files.download(version)}>
+        <Button size="sm" variant="ghost" icon={<Download aria-hidden />} onClick={() => files.download(cv, version)}>
           {t('cvs.actions.download')}
         </Button>
       </div>

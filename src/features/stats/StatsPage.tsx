@@ -1,6 +1,7 @@
 import { ChartColumn } from 'lucide-react'
 import { useMemo, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router'
 import { useUI } from '../../app/UIProvider'
 import { Button } from '../../components/Button'
 import { EmptyState, Skeleton } from '../../components/Feedback'
@@ -10,6 +11,8 @@ import { formatDate } from '../../lib/dates'
 import { formatNumber } from '../../lib/money'
 import { useApplications } from '../applications/ApplicationsProvider'
 import { STATUS_ICON } from '../applications/status'
+import { useCvs } from '../cvs/CvsProvider'
+import { cvPerformanceRows, type CvRow } from '../cvs/cvStats'
 import { BarList, ColumnChart } from './charts'
 import { applicationsPerWeek, summarize, type GroupStat } from './metrics'
 import styles from './StatsPage.module.css'
@@ -19,11 +22,13 @@ const pct = (v: number | null) => (v === null ? '—' : `${Math.round(v * 100)}%
 export function StatsPage() {
   const { t } = useTranslation()
   const { items, loading } = useApplications()
+  const { cvs, loading: cvsLoading } = useCvs()
   const { openAdd } = useUI()
   const summary = useMemo(() => summarize(items), [items])
   const weeks = useMemo(() => applicationsPerWeek(items), [items])
+  const cvRows = useMemo(() => cvPerformanceRows(items, cvs), [items, cvs])
 
-  if (loading) {
+  if (loading || cvsLoading) {
     return (
       <Page>
         <PageHeader title={t('stats.title')} />
@@ -124,8 +129,8 @@ export function StatsPage() {
           <GroupTable rows={summary.bySource} name={(k) => t(`source.${k}`)} />
         </Card>
 
-        <Card title={t('stats.byCv')} subtitle={summary.byCv.length === 0 ? t('stats.byCvEmpty') : undefined} wide>
-          {summary.byCv.length > 0 && <GroupTable rows={summary.byCv} name={(k) => k} />}
+        <Card title={t('stats.byCv')} subtitle={cvRows.length === 0 ? t('stats.byCvEmpty') : t('stats.byCvHint')} wide>
+          {cvRows.length > 0 && <CvTable rows={cvRows} />}
         </Card>
       </div>
     </Page>
@@ -180,6 +185,61 @@ function GroupTable<K extends string>({ rows, name }: { rows: GroupStat<K>[]; na
               <td>
                 <RateCell part={r.interviews} total={r.sent} />
               </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+/** Same columns as the other tables, plus offers; CVs with under 5 applications get a "little data" note. */
+function CvTable({ rows }: { rows: CvRow[] }) {
+  const { t } = useTranslation()
+  return (
+    <div className={styles.tableWrap}>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th scope="col">{t('stats.cols.cv')}</th>
+            <th scope="col" className={styles.num}>
+              {t('stats.cols.sent')}
+            </th>
+            <th scope="col">{t('stats.cols.responses')}</th>
+            <th scope="col">{t('stats.cols.interviews')}</th>
+            <th scope="col" className={styles.num}>
+              {t('stats.cols.offers')}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r.key}>
+              <th scope="row">
+                <span className={styles.cvName}>
+                  {r.cvId ? (
+                    <Link to={`/cvs/${r.cvId}`} className={styles.cvLink}>
+                      {r.label}
+                    </Link>
+                  ) : (
+                    <span className={styles.cvMuted}>{r.label}</span>
+                  )}
+                  {r.kind !== 'cv' && <span className={styles.cvNote}>{t(r.kind === 'deleted' ? 'stats.cvDeleted' : 'stats.cvLegacy')}</span>}
+                  {r.stat.few && (
+                    <span className={styles.cvNote} title={t('cvs.fewDataHint')}>
+                      {t('cvs.fewData')}
+                    </span>
+                  )}
+                </span>
+              </th>
+              <td className={cx(styles.num, 'tabular')}>{r.stat.sent}</td>
+              <td>
+                <RateCell part={r.stat.responses} total={r.stat.sent} />
+              </td>
+              <td>
+                <RateCell part={r.stat.interviews} total={r.stat.sent} />
+              </td>
+              <td className={cx(styles.num, 'tabular')}>{r.stat.offers}</td>
             </tr>
           ))}
         </tbody>

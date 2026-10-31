@@ -88,6 +88,7 @@ function JobDetail({ app, onClose }: { app: Application; onClose: () => void }) 
   const { byId: cvsById } = useCvs()
   const cvFiles = useCvFileCommands()
   const usedCv = resolveJobCv(app, cvsById)
+  const usedFile = usedCv?.cv && !usedCv.deleted ? { cv: usedCv.cv, version: usedCv.version } : null
   const toast = useToast()
   const [confirmDelete, setConfirmDelete] = useState(false)
   const { reload, busyId } = useReloadFromLink()
@@ -295,8 +296,8 @@ function JobDetail({ app, onClose }: { app: Application; onClose: () => void }) 
                     onAutoOpenDone={clearCvPicker}
                     onChange={(selection) => actions.setCv(app, selection)}
                   />
-                  {usedCv?.cv && !usedCv.deleted && (
-                    <Button size="sm" variant="ghost" icon={<Eye aria-hidden />} className={styles.cvView} onClick={() => cvFiles.open(usedCv.version)}>
+                  {usedFile && (
+                    <Button size="sm" variant="ghost" icon={<Eye aria-hidden />} className={styles.cvView} onClick={() => cvFiles.open(usedFile.cv, usedFile.version)}>
                       {t('cvPicker.view')}
                     </Button>
                   )}

@@ -17,7 +17,7 @@ export function focusJobsSearch(attempt = 0) {
 }
 
 /**
- * Desktop shortcuts: N new job, / search, G then T/B/L/C/S navigation, ? help, Cmd/Ctrl+K palette.
+ * Desktop shortcuts: N new job, / search, G then T/B/L/V/C/S navigation, ? help, Cmd/Ctrl+K palette.
  * Single-key shortcuts are ignored while typing or while a dialog is open.
  */
 export function useShortcuts() {
@@ -50,6 +50,7 @@ export function useShortcuts() {
             update({ jobsView: 'list' })
             navigate('/jobs')
           },
+          v: () => navigate('/cvs'),
           c: () => navigate('/calendar'),
           s: () => navigate('/stats'),
         }

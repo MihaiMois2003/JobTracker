@@ -49,8 +49,8 @@ export function useCvCommands({ onCreated, onDeleted }: { onCreated?: (cvId: str
   const menu = (cv: Cv): MenuEntry[] => {
     const current = currentVersion(cv)
     return [
-      { key: 'open', label: t('cvs.actions.openPdf'), icon: <ExternalLink aria-hidden />, onSelect: () => files.open(current) },
-      { key: 'download', label: t('cvs.actions.download'), icon: <Download aria-hidden />, onSelect: () => files.download(current) },
+      { key: 'open', label: t('cvs.actions.openPdf'), icon: <ExternalLink aria-hidden />, onSelect: () => files.open(cv, current) },
+      { key: 'download', label: t('cvs.actions.download'), icon: <Download aria-hidden />, onSelect: () => files.download(cv, current) },
       { key: 'version', label: t('cvs.actions.newVersion'), icon: <Upload aria-hidden />, onSelect: () => setUpload({ mode: { kind: 'version', cv }, file: null }) },
       { key: 'edit', label: t('cvs.actions.edit'), icon: <Pencil aria-hidden />, onSelect: () => setEditing(cv) },
       ...(cv.archived

@@ -28,6 +28,11 @@ function toCvFileError(err: unknown): CvFileError {
   return new CvFileError('unknown')
 }
 
+/** Storage retries for up to two minutes when offline; fail fast with a clear message instead. */
+function requireOnline() {
+  if (!navigator.onLine) throw new CvFileError('offline')
+}
+
 /** Checks a picked file before uploading: a real PDF (by signature, not just the extension), at most 5 MB. */
 export async function validateCvFile(file: File): Promise<CvFileErrorCode | null> {
   const named = /\.pdf$/i.test(file.name)
@@ -64,7 +69,7 @@ export function uploadCvFile(path: string, file: File, onProgress: (ratio: numbe
   let cancel = () => {}
   let cancelled = false
   const done = (async () => {
-    if (!navigator.onLine) throw new CvFileError('offline')
+    requireOnline()
     const { sdk } = await loadStorage()
     if (cancelled) throw new CvFileError('canceled')
     const task = sdk.uploadBytesResumable(await refFor(path), file, {
@@ -99,6 +104,7 @@ export function cvFileUrl(path: string): Promise<string> {
   let url = urlCache.get(path)
   if (!url) {
     url = (async () => {
+      requireOnline()
       const { sdk } = await loadStorage()
       return sdk.getDownloadURL(await refFor(path))
     })().catch((err: unknown) => {
@@ -153,6 +159,7 @@ export async function downloadCvFile(path: string, fileName: string): Promise<vo
 export async function deleteCvFile(path: string): Promise<void> {
   if (!path) return
   try {
+    requireOnline()
     const { sdk } = await loadStorage()
     await sdk.deleteObject(await refFor(path))
   } catch (err) {
@@ -165,6 +172,7 @@ export async function deleteCvFile(path: string): Promise<void> {
 
 /** Deletes every file under `users/{uid}/`, including any left behind by interrupted uploads. */
 export async function deleteAllUserFiles(uid: string): Promise<void> {
+  requireOnline()
   const { sdk } = await loadStorage()
   const walk = async (dir: StorageReference): Promise<void> => {
     const page = await sdk.listAll(dir)

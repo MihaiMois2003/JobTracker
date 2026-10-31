@@ -2,6 +2,7 @@ import {
   CalendarDays,
   ChartColumn,
   CornerDownLeft,
+  FileText,
   Kanban,
   Keyboard,
   List,
@@ -10,6 +11,7 @@ import {
   Search,
   Settings,
   Sun,
+  Upload,
   type LucideIcon,
 } from 'lucide-react'
 import { useMemo, useState, type KeyboardEvent } from 'react'
@@ -77,6 +79,8 @@ function PaletteBody({ onClose }: { onClose: () => void }) {
           navigate('/jobs')
         },
       },
+      { id: 'cvs', label: t('palette.goTo', { page: t('nav.cvs') }), icon: FileText, run: () => navigate('/cvs') },
+      { id: 'upload-cv', label: t('cvs.upload'), icon: Upload, run: () => navigate('/cvs?upload=1') },
       { id: 'calendar', label: t('palette.goTo', { page: t('nav.calendar') }), icon: CalendarDays, run: () => navigate('/calendar') },
       { id: 'stats', label: t('palette.goTo', { page: t('nav.stats') }), icon: ChartColumn, run: () => navigate('/stats') },
       { id: 'settings', label: t('palette.goTo', { page: t('nav.settings') }), icon: Settings, run: () => navigate('/settings') },

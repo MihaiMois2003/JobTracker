@@ -1,6 +1,9 @@
 import { newId } from '../../lib/id'
 import { normalizeApplication } from '../applications/normalize'
 import type { Application } from '../applications/types'
+import { resolveJobCv } from '../cvs/labels'
+import { normalizeCv, normalizeVersion } from '../cvs/normalize'
+import type { Cv, CvRecord } from '../cvs/types'
 import type { Settings } from './settings'
 
 const EXPORT_FORMAT = 'ledger.export'
@@ -21,15 +24,16 @@ export function stamp(): string {
   return new Date().toISOString().slice(0, 10)
 }
 
-export function toJSON(items: Application[], settings: Settings): string {
+/** Version 2 adds `cvs` (metadata and versions only; the PDF files are not part of the export). */
+export function toJSON(items: Application[], settings: Settings, cvs: Cv[]): string {
   return JSON.stringify(
-    { format: EXPORT_FORMAT, version: 1, exportedAt: new Date().toISOString(), settings, applications: items },
+    { format: EXPORT_FORMAT, version: 2, exportedAt: new Date().toISOString(), settings, applications: items, cvs },
     null,
     2,
   )
 }
 
-const CSV_COLUMNS: Array<[string, (a: Application) => string | number | null]> = [
+const CSV_COLUMNS: Array<[string, (a: Application, cvs: Map<string, Cv>) => string | number | null]> = [
   ['title', (a) => a.title],
   ['company', (a) => a.company],
   ['status', (a) => a.status],
@@ -48,6 +52,15 @@ const CSV_COLUMNS: Array<[string, (a: Application) => string | number | null]> =
   ['deadline', (a) => a.deadline],
   ['nextFollowUpAt', (a) => a.nextFollowUpAt],
   ['cvVersion', (a) => a.cvVersion],
+  [
+    'cv',
+    (a, cvs) => {
+      const r = resolveJobCv(a, cvs)
+      return r ? `${r.label}${r.deleted ? ' (deleted)' : ''}` : ''
+    },
+  ],
+  ['cvId', (a) => a.cvId],
+  ['cvVersionId', (a) => a.cvVersionId],
   ['tags', (a) => a.tags.join('; ')],
   ['interviews', (a) => a.interviews.length],
   ['contacts', (a) => a.contacts.map((c) => [c.name, c.email].filter(Boolean).join(' ')).join('; ')],
@@ -65,17 +78,47 @@ function csvCell(v: string | number | null): string {
   return /[",\n\r;]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe
 }
 
-export function toCSV(items: Application[]): string {
+export function toCSV(items: Application[], cvs: Map<string, Cv>): string {
   const header = CSV_COLUMNS.map(([name]) => name).join(',')
-  const rows = items.map((a) => CSV_COLUMNS.map(([, get]) => csvCell(get(a))).join(','))
+  const rows = items.map((a) => CSV_COLUMNS.map(([, get]) => csvCell(get(a, cvs))).join(','))
   // BOM so Excel opens UTF-8 (diacritics) correctly.
   return '﻿' + [header, ...rows].join('\r\n')
 }
 
 export class ImportError extends Error {}
 
-/** Accepts a Ledger export (or a bare array of applications) and returns clean documents. */
-export function parseImport(text: string): Array<{ id: string; data: Omit<Application, 'id'> }> {
+const ID = /^[A-Za-z0-9_-]{1,64}$/
+
+export interface ParsedImport {
+  applications: Array<{ id: string; data: Omit<Application, 'id'> }>
+  cvs: CvRecord[]
+}
+
+/**
+ * CV metadata from a version 2 export. A file path is kept only if it points into this user's own
+ * CV folder; otherwise the version shows as "no file" (the PDFs are never part of an export).
+ */
+function parseCvs(raw: unknown, uid: string): CvRecord[] {
+  if (!Array.isArray(raw)) return []
+  return raw
+    .filter((x): x is Record<string, unknown> => !!x && typeof x === 'object' && typeof (x as { id?: unknown }).id === 'string')
+    .filter((obj) => ID.test(obj.id as string))
+    .map((obj) => {
+      const id = obj.id as string
+      const versions = (Array.isArray(obj.versions) ? obj.versions : [])
+        .filter((v): v is Record<string, unknown> => !!v && typeof v === 'object' && typeof (v as { id?: unknown }).id === 'string')
+        .filter((v) => ID.test(v.id as string))
+        .map((v) => {
+          const { id: vId, ...data } = normalizeVersion(v.id as string, v)
+          if (!data.storagePath.startsWith(`users/${uid}/cvs/${id}/`)) data.storagePath = ''
+          return { id: vId, data }
+        })
+      return { id, data: normalizeCv(obj), versions }
+    })
+}
+
+/** Accepts a Ledger export (version 1 or 2, or a bare array of applications) and returns clean documents. */
+export function parseImport(text: string, uid: string): ParsedImport {
   let raw: unknown
   try {
     raw = JSON.parse(text)
@@ -90,10 +133,10 @@ export function parseImport(text: string): Array<{ id: string; data: Omit<Applic
   if (!list) throw new ImportError('not_ledger')
 
   const now = new Date().toISOString()
-  return list
+  const applications = list
     .filter((x): x is Record<string, unknown> => !!x && typeof x === 'object')
     .map((obj) => {
-      const id = typeof obj.id === 'string' && /^[A-Za-z0-9_-]{1,64}$/.test(obj.id) ? obj.id : newId()
+      const id = typeof obj.id === 'string' && ID.test(obj.id) ? obj.id : newId()
       const { id: _drop, ...app } = normalizeApplication(id, obj)
       if (!app.title && !app.company) return null
       return {
@@ -102,4 +145,6 @@ export function parseImport(text: string): Array<{ id: string; data: Omit<Applic
       }
     })
     .filter((x): x is { id: string; data: Omit<Application, 'id'> } => x !== null)
+  const cvs = Array.isArray(raw) ? [] : parseCvs((raw as { cvs?: unknown }).cvs, uid)
+  return { applications, cvs }
 }

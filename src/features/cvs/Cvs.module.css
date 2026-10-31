@@ -171,7 +171,9 @@
   border-color: var(--line-strong);
 }
 
+/* Lifts the card while its menu is open, so the dropdown is never covered by the next card. */
 .card:focus-within {
+  z-index: 2;
   border-color: var(--accent);
 }
 
