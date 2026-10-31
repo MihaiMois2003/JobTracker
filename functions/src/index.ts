@@ -17,6 +17,9 @@ const ANTHROPIC_API_KEY = defineSecret('ANTHROPIC_API_KEY')
 
 const callableOptions = {
   secrets: [ANTHROPIC_API_KEY],
+  // Explicit, so every deploy (not only the first create) grants Cloud Run invoke access.
+  // Auth is still enforced in code by requireUser.
+  invoker: 'public' as const,
   timeoutSeconds: 60,
   memory: '512MiB' as const,
 }
