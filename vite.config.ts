@@ -12,6 +12,8 @@ export default defineConfig({
         // Long-lived vendor chunks cache well across deploys.
         codeSplitting: {
           groups: [
+            // Storage is only needed for CV files and is imported on demand.
+            { name: 'firebase-storage', test: /node_modules[\\/]@?firebase[\\/]storage[\\/]/ },
             { name: 'firebase', test: /node_modules[\\/](firebase|@firebase)[\\/]/ },
             { name: 'react', test: /node_modules[\\/](react|react-dom|react-router|scheduler)[\\/]/ },
             { name: 'vendor', test: /node_modules[\\/]/ },

@@ -108,7 +108,15 @@ export interface Application {
   sourceName: SourceName
   status: Status
   priority: Priority
+  /** Free-text "CV used" from before CVs could be uploaded; kept as is. */
   cvVersion: string
+  /** The uploaded CV this was sent with (see features/cvs). */
+  cvId: string | null
+  cvVersionId: string | null
+  /** "Frontend · v3 · RO", taken when the CV was chosen; shown if it is deleted later. */
+  cvLabelSnapshot: string
+  /** The chosen CV or version was deleted afterwards. */
+  cvDeleted: boolean
   /** Dates are `yyyy-MM-dd`. */
   appliedAt: string | null
   deadline: string | null
@@ -158,6 +166,10 @@ export function emptyDraft(currency: string): ApplicationDraft {
     status: 'saved',
     priority: 2,
     cvVersion: '',
+    cvId: null,
+    cvVersionId: null,
+    cvLabelSnapshot: '',
+    cvDeleted: false,
     appliedAt: null,
     deadline: null,
     nextFollowUpAt: null,

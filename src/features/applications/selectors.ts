@@ -54,7 +54,7 @@ export function matchesQuery(app: Application, q: string): boolean {
   const needle = fold(q.trim())
   if (!needle) return true
   const hay = fold(
-    [app.title, app.company, app.location, app.cvVersion, app.tags.join(' '), app.notes, app.sourceName].join(' '),
+    [app.title, app.company, app.location, app.cvVersion, app.cvLabelSnapshot, app.tags.join(' '), app.notes, app.sourceName].join(' '),
   )
   return needle.split(/\s+/).every((word) => hay.includes(word))
 }

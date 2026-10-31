@@ -1,0 +1,14 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Each signed-in user can read and write only their own files.
+    // Uploads must be PDFs of at most 5 MB (CVs live under users/{uid}/cvs/).
+    match /users/{uid}/{allPaths=**} {
+      allow read, delete: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null && request.auth.uid == uid
+        && request.resource.contentType == 'application/pdf'
+        && request.resource.size <= 5 * 1024 * 1024;
+    }
+  }
+}
