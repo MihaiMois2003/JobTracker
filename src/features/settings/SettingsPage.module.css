@@ -8,6 +8,16 @@
   }
 }
 
+.phoneOnly {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .phoneOnly {
+    display: contents;
+  }
+}
+
 .group {
   margin-bottom: var(--s-10);
 }

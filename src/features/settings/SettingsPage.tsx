@@ -1,6 +1,7 @@
-import { Keyboard, LogOut, Monitor, Moon, Sun } from 'lucide-react'
+import { ChevronRight, FileText, Keyboard, LogOut, Monitor, Moon, Sun } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router'
 import { Button } from '../../components/Button'
 import { Input, Select } from '../../components/Field'
 import { Segmented } from '../../components/Menu'
@@ -20,10 +21,23 @@ export function SettingsPage() {
   const { settings, update } = useSettings()
   const { user, signOut } = useAuth()
   const { setShortcutsOpen } = useUI()
+  const navigate = useNavigate()
 
   return (
     <Page width="narrow">
       <PageHeader title={t('settings.title')} subtitle={t('settings.subtitle')} />
+
+      {/* Pages that have no tab in the phone bottom bar. */}
+      <div className={styles.phoneOnly}>
+        <SettingsGroup title={t('settings.more')}>
+          <SettingsRow label={t('nav.cvs')} hint={t('settings.cvsHint')}>
+            <Button icon={<FileText aria-hidden />} onClick={() => navigate('/cvs')}>
+              {t('cvs.title')}
+              <ChevronRight aria-hidden />
+            </Button>
+          </SettingsRow>
+        </SettingsGroup>
+      </div>
 
       <SettingsGroup title={t('settings.appearance')}>
         <SettingsRow label={t('language.label')} hint={t('settings.languageHint')}>

@@ -14,6 +14,8 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <TodayPage /> },
       { path: 'jobs', element: <JobsPage /> },
+      { path: 'cvs', lazy: async () => ({ Component: (await import('../features/cvs/CvsPage')).CvsPage }) },
+      { path: 'cvs/:cvId', lazy: async () => ({ Component: (await import('../features/cvs/CvDetailPage')).CvDetailPage }) },
       { path: 'calendar', lazy: async () => ({ Component: (await import('../features/calendar/CalendarPage')).CalendarPage }) },
       { path: 'stats', lazy: async () => ({ Component: (await import('../features/stats/StatsPage')).StatsPage }) },
       { path: 'settings', lazy: async () => ({ Component: (await import('../features/settings/SettingsPage')).SettingsPage }) },
