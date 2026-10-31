@@ -13,6 +13,8 @@ import { useApplications } from '../applications/ApplicationsProvider'
 import { findDuplicates, type DuplicateReport } from '../applications/duplicates'
 import { emptyDraft, type ApplicationDraft } from '../applications/types'
 import { useApplicationActions } from '../applications/useApplicationActions'
+import { useCvs } from '../cvs/CvsProvider'
+import { currentVersion, cvSelection, defaultCv } from '../cvs/labels'
 import { useSettings } from '../settings/SettingsProvider'
 import styles from './AddJobDialog.module.css'
 import {
@@ -55,6 +57,7 @@ function AddJobFlow({ initialUrl, onDone }: { initialUrl: string; onDone: () => 
   const { openJob } = useUI()
   const actions = useApplicationActions()
   const toast = useToast()
+  const { cvs } = useCvs()
 
   const [step, setStep] = useState<Step>('link')
   const [url, setUrl] = useState(initialUrl)
@@ -65,6 +68,8 @@ function AddJobFlow({ initialUrl, onDone }: { initialUrl: string; onDone: () => 
   const [meta, setMeta] = useState<ReviewMeta>({ confidence: null, remaining: null, cached: false })
   const [errors, setErrors] = useState<DraftErrors>({})
   const [submitted, setSubmitted] = useState(false)
+  /** Once the user picks (or clears) a CV, stop preselecting the default one. */
+  const [cvTouched, setCvTouched] = useState(false)
   // Ignores results of a reading the user cancelled.
   const request = useRef(0)
 
@@ -140,6 +145,12 @@ function AddJobFlow({ initialUrl, onDone }: { initialUrl: string; onDone: () => 
   const change = (patch: Partial<ApplicationDraft>) => {
     const next = { ...draft, ...patch }
     if (patch.status && patch.status !== 'saved' && !next.appliedAt) next.appliedAt = todayISO()
+    if ('cvId' in patch) setCvTouched(true)
+    // Applying: preselect the default CV (it can still be changed or cleared).
+    const fallback = defaultCv(cvs)
+    if (patch.status && patch.status !== 'saved' && !next.cvId && !cvTouched && fallback) {
+      Object.assign(next, cvSelection(fallback, currentVersion(fallback)))
+    }
     setDraft(next)
     if (submitted) setErrors(validateDraft(next, t))
   }

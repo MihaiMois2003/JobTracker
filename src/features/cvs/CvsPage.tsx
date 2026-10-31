@@ -15,6 +15,7 @@ import styles from './Cvs.module.css'
 import { useCvs } from './CvsProvider'
 import { cvPerformance, pct, type CvStat } from './cvStats'
 import { currentVersion, matchesCvQuery } from './labels'
+import { LegacyLinkSection } from './LegacyLink'
 import type { Cv, CvLanguage } from './types'
 import { useCvCommands } from './useCvCommands'
 
@@ -117,6 +118,8 @@ export function CvsPage() {
           </div>
         ) : (
           <>
+            <LegacyLinkSection />
+
             <div className={styles.toolbar}>
               <label className={styles.search}>
                 <Search aria-hidden />

@@ -5,6 +5,8 @@ interface ToastOptions {
   message: string
   tone?: 'neutral' | 'danger'
   action?: { label: string; onClick: () => void }
+  /** Shown before `action`, e.g. "Change CV" next to "Undo". */
+  secondaryAction?: { label: string; onClick: () => void }
   durationMs?: number
 }
 
@@ -26,7 +28,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     (options: ToastOptions) => {
       const id = nextId.current++
       setItems((list) => [...list.slice(-2), { ...options, id }])
-      window.setTimeout(() => dismiss(id), options.durationMs ?? (options.action ? 6000 : 3500))
+      window.setTimeout(() => dismiss(id), options.durationMs ?? (options.action || options.secondaryAction ? 6000 : 3500))
     },
     [dismiss],
   )
@@ -41,6 +43,18 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           <div key={item.id} className={styles.toast} data-tone={item.tone ?? 'neutral'}>
             <span className={styles.dot} aria-hidden />
             <span className={styles.message}>{item.message}</span>
+            {item.secondaryAction && (
+              <button
+                type="button"
+                className={styles.action}
+                onClick={() => {
+                  item.secondaryAction?.onClick()
+                  dismiss(item.id)
+                }}
+              >
+                {item.secondaryAction.label}
+              </button>
+            )}
             {item.action && (
               <button
                 type="button"

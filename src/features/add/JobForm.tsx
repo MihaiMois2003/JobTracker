@@ -5,6 +5,7 @@ import { Field, FieldRow, Input, Select, Textarea } from '../../components/Field
 import { TagInput } from '../../components/TagInput'
 import { cx } from '../../lib/cx'
 import { CURRENCIES } from '../../lib/money'
+import { CvPicker } from '../cvs/CvPicker'
 import {
   EMPLOYMENT_TYPES,
   PRIORITIES,
@@ -177,7 +178,7 @@ export function JobForm({ draft, onChange, errors, autoFilled }: JobFormProps) {
           </Field>
         </FieldRow>
         <Field label={t('job.fields.cvVersion')} optional>
-          {(p) => <Input {...p} value={draft.cvVersion} placeholder={t('job.cvPlaceholder')} onChange={(e) => onChange({ cvVersion: e.target.value })} />}
+          {(p) => <CvPicker id={p.id} variant="field" value={draft} onChange={(selection) => onChange(selection)} />}
         </Field>
         <Field label={t('job.sections.notes')} optional>
           {(p) => <Textarea {...p} rows={3} value={draft.notes} placeholder={t('job.notesPlaceholder')} onChange={(e) => onChange({ notes: e.target.value })} />}

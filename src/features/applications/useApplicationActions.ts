@@ -1,11 +1,15 @@
 import { arrayUnion, collection, deleteDoc, doc, setDoc, updateDoc, writeBatch } from 'firebase/firestore'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useUI } from '../../app/UIProvider'
 import { useToast } from '../../components/Toast'
 import { addDaysISO, todayISO } from '../../lib/dates'
 import { db } from '../../lib/firebase'
 import { newId } from '../../lib/id'
 import { useUser } from '../auth/AuthProvider'
+import { useCvs } from '../cvs/CvsProvider'
+import { currentVersion, cvSelection, defaultCv } from '../cvs/labels'
+import type { CvSelection } from '../cvs/types'
 import { useSettings } from '../settings/SettingsProvider'
 import {
   isClosed,
@@ -50,6 +54,9 @@ export function useApplicationActions() {
   const { settings } = useSettings()
   const toast = useToast()
   const { t } = useTranslation()
+  const { openJob } = useUI()
+  const { cvs } = useCvs()
+  const fallbackCv = defaultCv(cvs)
 
   return useMemo(() => {
     const col = collection(db, 'users', user.uid, 'applications')
@@ -86,16 +93,23 @@ export function useApplicationActions() {
       if (app.status === to) return
       const auto = statusAutomation(app, to, settings.followUpDays)
       const e = event('status', { from: app.status, to })
+      // Marking as applied with no CV chosen (and no old free-text CV) picks the default CV;
+      // the toast offers to change it, nothing blocks the move.
+      const cv = to === 'applied' && !app.cvId && !app.cvVersion.trim() && fallbackCv ? cvSelection(fallbackCv, currentVersion(fallbackCv)) : null
       run(
         updateDoc(ref(app.id), {
           status: to,
           ...auto,
+          ...cv,
           timeline: arrayUnion(e),
           updatedAt: new Date().toISOString(),
         }),
       )
       toast({
-        message: t('jobs.movedTo', { status: t(`status.${to}`) }),
+        message: cv
+          ? t('jobs.movedToWithCv', { status: t(`status.${to}`), cv: cv.cvLabelSnapshot })
+          : t('jobs.movedTo', { status: t(`status.${to}`) }),
+        secondaryAction: cv ? { label: t('cvPicker.change'), onClick: () => openJob(app.id, { pickCv: true }) } : undefined,
         action: {
           label: t('common.undo'),
           onClick: () =>
@@ -104,10 +118,13 @@ export function useApplicationActions() {
               appliedAt: app.appliedAt,
               nextFollowUpAt: app.nextFollowUpAt,
               timeline: app.timeline,
+              ...(cv && { cvId: app.cvId, cvVersionId: app.cvVersionId, cvLabelSnapshot: app.cvLabelSnapshot, cvDeleted: app.cvDeleted }),
             }),
         },
       })
     }
+
+    const setCv = (app: Application, selection: CvSelection) => update(app.id, selection)
 
     const setArchived = (app: Application, archived: boolean) => {
       run(
@@ -222,6 +239,7 @@ export function useApplicationActions() {
       create,
       update,
       setStatus,
+      setCv,
       setArchived,
       remove,
       duplicate,
@@ -237,7 +255,7 @@ export function useApplicationActions() {
       deleteMany,
       newEvent: event,
     }
-  }, [user.uid, settings.followUpDays, toast, t])
+  }, [user.uid, settings.followUpDays, toast, t, openJob, fallbackCv])
 }
 
 export type ApplicationActions = ReturnType<typeof useApplicationActions>

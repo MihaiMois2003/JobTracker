@@ -9,8 +9,12 @@ interface UIState {
   closeAdd: () => void
   /** Job detail is addressed by `?job=<id>` so it survives reloads and back/forward. */
   jobId: string | null
-  openJob: (id: string) => void
+  /** `pickCv` also opens the job's "CV used" picker. */
+  openJob: (id: string, options?: { pickCv?: boolean }) => void
   closeJob: () => void
+  /** Job whose CV picker should open once its page renders. */
+  cvPickerFor: string | null
+  clearCvPicker: () => void
   paletteOpen: boolean
   setPaletteOpen: (open: boolean) => void
   shortcutsOpen: boolean
@@ -25,6 +29,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [addUrl, setAddUrl] = useState('')
   const [paletteOpen, setPaletteOpen] = useState(false)
   const [shortcutsOpen, setShortcutsOpen] = useState(false)
+  const [cvPickerFor, setCvPickerFor] = useState<string | null>(null)
   const [params, setParams] = useSearchParams()
   const jobId = params.get('job')
 
@@ -35,26 +40,28 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const closeAdd = useCallback(() => setAddOpen(false), [])
 
   const openJob = useCallback(
-    (id: string) =>
+    (id: string, options?: { pickCv?: boolean }) => {
+      setCvPickerFor(options?.pickCv ? id : null)
       setParams((p) => {
         const next = new URLSearchParams(p)
         next.set('job', id)
         return next
-      }),
+      })
+    },
     [setParams],
   )
-  const closeJob = useCallback(
-    () =>
-      setParams(
-        (p) => {
-          const next = new URLSearchParams(p)
-          next.delete('job')
-          return next
-        },
-        { replace: true },
-      ),
-    [setParams],
-  )
+  const clearCvPicker = useCallback(() => setCvPickerFor(null), [])
+  const closeJob = useCallback(() => {
+    setCvPickerFor(null)
+    setParams(
+      (p) => {
+        const next = new URLSearchParams(p)
+        next.delete('job')
+        return next
+      },
+      { replace: true },
+    )
+  }, [setParams])
 
   // Drop the one-shot ?add=1 from the URL.
   useEffect(() => {
@@ -78,12 +85,14 @@ export function UIProvider({ children }: { children: ReactNode }) {
       jobId,
       openJob,
       closeJob,
+      cvPickerFor,
+      clearCvPicker,
       paletteOpen,
       setPaletteOpen,
       shortcutsOpen,
       setShortcutsOpen,
     }),
-    [addOpen, addUrl, openAdd, closeAdd, jobId, openJob, closeJob, paletteOpen, shortcutsOpen],
+    [addOpen, addUrl, openAdd, closeAdd, jobId, openJob, closeJob, cvPickerFor, clearCvPicker, paletteOpen, shortcutsOpen],
   )
 
   return <UIContext.Provider value={value}>{children}</UIContext.Provider>

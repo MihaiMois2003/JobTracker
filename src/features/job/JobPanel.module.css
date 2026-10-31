@@ -125,6 +125,10 @@
   gap: 2px;
 }
 
+.cvView {
+  flex: none;
+}
+
 .salary {
   display: flex;
   align-items: center;

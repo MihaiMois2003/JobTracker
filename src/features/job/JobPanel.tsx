@@ -9,8 +9,10 @@ import {
   CircleSlash,
   Copy,
   Ellipsis,
+  Eye,
   ExternalLink,
   FileText,
+  History,
   Flag,
   Ghost,
   Globe,
@@ -44,6 +46,10 @@ import {
   type Application,
 } from '../applications/types'
 import { useApplicationActions } from '../applications/useApplicationActions'
+import { CvPicker } from '../cvs/CvPicker'
+import { useCvs } from '../cvs/CvsProvider'
+import { resolveJobCv } from '../cvs/labels'
+import { useCvFileCommands } from '../cvs/useCvFileCommands'
 import { useAttention } from '../today/useAttention'
 import { daysSince } from '../../lib/dates'
 import { lastActivityAt } from '../applications/selectors'
@@ -78,7 +84,10 @@ export function JobPanel() {
 function JobDetail({ app, onClose }: { app: Application; onClose: () => void }) {
   const { t } = useTranslation()
   const actions = useApplicationActions()
-  const { openJob } = useUI()
+  const { openJob, cvPickerFor, clearCvPicker } = useUI()
+  const { byId: cvsById } = useCvs()
+  const cvFiles = useCvFileCommands()
+  const usedCv = resolveJobCv(app, cvsById)
   const toast = useToast()
   const [confirmDelete, setConfirmDelete] = useState(false)
   const { reload, busyId } = useReloadFromLink()
@@ -276,8 +285,30 @@ function JobDetail({ app, onClose }: { app: Application; onClose: () => void }) 
               )}
             </FactRow>
             <FactRow label={t('job.fields.cvVersion')} icon={<FileText aria-hidden />}>
-              {(id) => <InlineText id={id} value={app.cvVersion} onCommit={(cvVersion) => set({ cvVersion })} placeholder={t('job.cvPlaceholder')} />}
+              {(id) => (
+                <>
+                  <CvPicker
+                    id={id}
+                    value={app}
+                    context={app.title || undefined}
+                    autoOpen={cvPickerFor === app.id}
+                    onAutoOpenDone={clearCvPicker}
+                    onChange={(selection) => actions.setCv(app, selection)}
+                  />
+                  {usedCv?.cv && !usedCv.deleted && (
+                    <Button size="sm" variant="ghost" icon={<Eye aria-hidden />} className={styles.cvView} onClick={() => cvFiles.open(usedCv.version)}>
+                      {t('cvPicker.view')}
+                    </Button>
+                  )}
+                </>
+              )}
             </FactRow>
+            {/* Free text from before CVs could be uploaded: kept and still editable until linked. */}
+            {app.cvVersion && (
+              <FactRow label={t('cvPicker.legacyLabel')} icon={<History aria-hidden />}>
+                {(id) => <InlineText id={id} value={app.cvVersion} onCommit={(cvVersion) => set({ cvVersion })} placeholder={t('job.cvPlaceholder')} />}
+              </FactRow>
+            )}
             <FactRow label={t('job.fields.appliedAt')} icon={<CalendarCheck aria-hidden />}>
               {(id) => <InlineDate id={id} value={app.appliedAt} onCommit={(appliedAt) => set({ appliedAt })} />}
             </FactRow>
